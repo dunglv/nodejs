@@ -1,0 +1,30 @@
+extends ../index
+block content
+	<div class="col-md-6 col-md-offset-3">
+		<form action="" method="POST" role="form">
+			<legend>Add new article</legend>
+			<div class="form-group">
+				<label for="">Title</label>
+				<input type="text" class="form-control" id="" name="title" placeholder="Title...">
+			</div>
+			<div class="form-group">
+				<label for="">Categories</label>
+				<select class="form-control" name="category" id="">
+					<option value="1">Lorem ipsum.</option>
+					<option value="1">Lorem ipsum.</option>
+					<option value="1">Lorem ipsum.</option>
+					<option value="1">Lorem ipsum.</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="">Description</label>
+				<textarea name="description" id=""  rows="5" class="form-control" placeholder="Description..."></textarea>
+			</div>
+			<div class="form-group">
+				<label for="">Content</label>
+				<textarea name="content" id="" rows="10" class="form-control" placeholder="Content..."></textarea>
+			</div>
+		
+			<button type="submit" class="btn btn-primary">Add</button>
+		</form>			
+	</div>
