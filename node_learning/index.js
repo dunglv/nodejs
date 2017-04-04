@@ -12,9 +12,10 @@ var db;
 const  MongoClient = require('mongodb').MongoClient;
 MongoClient.connect('mongodb://127.0.0.1:27017/dung', function(err, database){
 	if (err)  {
-		throw err;
+		console.log(err);
 	}else{
 		db = database;
+		console.log(db.exists);
 		app.listen(3000, function(){
 			console.log('Server is running at 3000...');
 		});
@@ -137,10 +138,52 @@ app.get('/logout', check_not_login, function(req, res, next){
  | -----------------------------------------------------------
  */
  // app.use(check_login);
+ app.get('/articles', function(req, res){
+	db.collection('articles').find().toArray(function(err, results){
+		if (results.length > 0) {
+			res.render('partials/articles', {articles: results});
+		} else {
+			res.redirect('partials/add-new-article');
+		}
+	});
+ });
  app.get('/add-new-article', check_not_login, function(req, res){
- 	res.render('partials/add-new-article');
+ 	db.collection('categories').find().toArray(function(err, results){
+ 		if (results.length > 0) {
+			res.render('partials/add-new-article', {categories: results});
+ 		} else {
+ 			res.redirect('/add-new-category');
+ 		}
+ 	});
+ });
+  app.post('/add-new-article', check_not_login, function(req, res){
+ 	db.collection('articles').save(req.body, function(err){
+ 		if (err) throw err;
+ 		res.redirect('/articles');
+ 	});
  });
  /*------------------------------------------------------------
  | CATEGORIES
  | -----------------------------------------------------------
  */
+app.get('/categories', function(req, res){
+	var categories = db.collection('categories').find().sort({id:1}).toArray(function(err, results){
+		if (results.length > 0) {
+			res.render('partials/categories', {categories: results});
+		} else {
+			res.redirect('/');
+		}
+	});
+});
+app.get('/add-new-category', check_not_login,  function(req, res){
+	res.render('partials/add-new-category.pug');
+});
+app.post('/add-new-category', function(req, res, next){
+	var title_get = req.body.title;
+	var description_get = req.body.description;
+	db.collection('categories').insert({title: title_get, description: description_get}, function(err){
+		if (err) throw err;
+		console.log('Save database');
+		res.redirect('/categories');
+	});
+});

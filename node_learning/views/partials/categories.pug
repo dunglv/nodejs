@@ -1,0 +1,18 @@
+extends ../index
+block content
+	<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6 col-md-offset-3">
+		-if(categories && categories.length > 0){
+			<div class="list-group">
+				-for (var i = 0; i < categories.length; i++) {
+					<a href="#" class="list-group-item">
+						<h4 class="list-group-item-heading">#{categories[i].title}</h4>
+						<p class="list-group-item-text">#{categories[i].description}</p>
+					</a>
+				-}
+			</div>
+			
+		-}else{
+
+		-}
+		
+	</div>
