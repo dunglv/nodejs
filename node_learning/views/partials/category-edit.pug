@@ -1,0 +1,17 @@
+extends ../index
+block content
+	<div class="col-md-6 col-md-offset-3">
+		<form action="" method="POST" role="form">
+			<legend>Edit Category</legend>
+			<div class="form-group">
+				<label for="">Title</label>
+				<input type="text" class="form-control" name="title" id="" value="#{category[0].title}" placeholder="Input field">
+			</div>
+			<div class="form-group">
+				<label for="">Description:</label>
+				<textarea class="form-control" name="description" rows="7">#{category[0].description}</textarea>
+			</div>
+			<button type="submit" class="btn btn-primary">Update</button>
+		</form>
+	</div>
+	

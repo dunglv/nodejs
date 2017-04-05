@@ -10,6 +10,7 @@ app.use(session({secret: '1234577'}));
 // Call mongodb conect database 
 var db;
 const  MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectId;
 MongoClient.connect('mongodb://127.0.0.1:27017/dung', function(err, database){
 	if (err)  {
 		console.log(err);
@@ -167,7 +168,7 @@ app.post('/regain-password', check_logged_in, function(req, res, next){
 			res.render('partials/regain-password');
 		} else {
 			console.log(new_password);
-			db.collection('users').update({_id: id}, {password: new_password}, function(err){
+			db.collection('users').update({_id: ObjectId(id)}, {$set: {password: new_password}}, function(err){
 				if(err) throw err;
 				res.redirect('/');
 			});
@@ -209,6 +210,7 @@ app.post('/regain-password', check_logged_in, function(req, res, next){
  | CATEGORIES
  | -----------------------------------------------------------
  */
+ app.set('category.index', '/categories');
 app.get('/categories', function(req, res){
 	var categories = db.collection('categories').find().sort({id:1}).toArray(function(err, results){
 		if (results.length > 0) {
@@ -228,6 +230,25 @@ app.post('/add-new-category', function(req, res, next){
 		if (err) throw err;
 		console.log('Save database');
 		res.redirect('/categories');
+	});
+});
+app.get('/category/:id/edit', check_not_login, function(req, res, next){
+	db.collection('categories').find({_id: ObjectId(req.params.id)}).toArray(function(err, results){
+		if (results.length > 0) {
+			res.render('partials/category-edit', {category: results});
+		} else {
+			res.redirect('/');
+		}
+	});
+});
+app.post('/category/:id/edit', function(req, res, next){
+	var id = req.params.id;
+	var _title = req.body.title;
+	var _description = req.body.description;
+	console.log(_description);
+	db.collection('categories').update({_id: ObjectId(id)}, {$set: {title: _title, description: _description}}, function(err){
+		if(err) throw err;
+		res.redirect('/category/'+id+'/edit');
 	});
 });
  /*------------------------------------------------------------

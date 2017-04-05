@@ -4,13 +4,16 @@ block content
 		-if(categories && categories.length > 0){
 			<div class="list-group">
 				-for (var i = 0; i < categories.length; i++) {
-					<a href="#" class="list-group-item">
-						<h4 class="list-group-item-heading">#{categories[i].title}</h4>
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading"><a href="">#{categories[i].title}</a></h4>
 						<p class="list-group-item-text">#{categories[i].description}</p>
-					</a>
+						<div class="opt" style="margin-top: 10px;">
+							<a href="/category/#{categories[i]._id}/delete" class="btn btn-danger"><i class="fa fa-remove"></i></a>
+							<a href="/category/#{categories[i]._id}/edit" class="btn btn-success"><i class="fa fa-edit"></i></a>
+						</div>
+					</div>
 				-}
 			</div>
-			
 		-}else{
 
 		-}
