@@ -68,18 +68,15 @@ app.get('/', function(req, res){
 	users.sort({'username': 1}).toArray(function(err, results){
 		res.render('./partials/home', {users: results});
 	});
-	console.log(sess.user);
 });
 
  app.get('/about', function(req, res){
 	res.render('./partials/about');
 	sess = req.session;
-	console.log(sess.user);
 });
  app.get('/help', function(req, res){
 	res.render('./partials/help');
 	sess = req.session;
-	console.log(sess.user);
 });
 /*------------------------------------------------------------
  | USER
@@ -131,6 +128,52 @@ app.get('/logout', check_not_login, function(req, res, next){
 	}else{
 		res.redirect('/');
 		console.log('Session was expired');
+	}
+});
+app.get('/retrieve-password', check_logged_in, function(req, res){
+	app.locals.msg = null;
+	res.render('partials/retrieve-password');
+});
+app.post('/retrieve-password', check_logged_in, function(req, res, next){
+	var username_get = req.body.username;
+	db.collection('users').find({username: username_get}).toArray(function(err, results){
+		if (results.length > 0) {
+			req.session.retrieve_user = results[0]._id;
+			res.redirect('/regain-password');
+			if (app.locals.msg) {
+				delete app.locals.msg;
+				app.locals.msg = null;
+			}
+		}else{
+			app.locals.msg = {status: 'error', message: "Username incorrect or not exists"};
+			res.render('partials/retrieve-password');
+		}
+	});
+});
+app.get('/regain-password', check_logged_in, function(req, res, next){
+	if (req.session && req.session.retrieve_user) {
+		res.render('partials/regain-password');
+	}else{
+		res.redirect('/retrieve-password');
+	}
+});
+app.post('/regain-password', check_logged_in, function(req, res, next){
+	if (req.session && req.session.retrieve_user) {
+		var id = req.session.retrieve_user;
+		var new_password = req.body.new_password;
+		var confirm_new_password = req.body.confirm_new_password;
+		if (new_password==="" || (new_password!==confirm_new_password)) {
+			app.locals.msg = {status: 'error', message: 'Confirm new password not mattched'};
+			res.render('partials/regain-password');
+		} else {
+			console.log(new_password);
+			db.collection('users').update({_id: id}, {password: new_password}, function(err){
+				if(err) throw err;
+				res.redirect('/');
+			});
+		}
+	}else{
+		res.redirect('/retrieve-password');
 	}
 });
 /*------------------------------------------------------------
@@ -187,3 +230,18 @@ app.post('/add-new-category', function(req, res, next){
 		res.redirect('/categories');
 	});
 });
+ /*------------------------------------------------------------
+ | SEARCH
+ | -----------------------------------------------------------
+ */
+ app.get('/search', function(req, res, next){
+ 	var s = req.param('s');
+ 	if (typeof s === "undefined") {
+ 		console.log('Please input key search');
+ 	}else{
+ 		db.collection('articles').find({$or: [{title: {$regex: ".*"+s+".*", $options: 'i'}}, {description:{$regex: ".*"+s+".*", $options: 'i'}}]}).toArray(function(err, results){
+ 			res.render('partials/search-results', {articles: results});
+	 		
+ 		});
+ 	}
+ });
