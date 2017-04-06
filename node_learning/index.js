@@ -251,6 +251,54 @@ app.post('/category/:id/edit', function(req, res, next){
 		res.redirect('/category/'+id+'/edit');
 	});
 });
+app.get('/category/:id', function(req, res){
+	var id = req.params.id;
+	db.collection('categories').find({_id: ObjectId(id)}).toArray(function(err, results){
+		if (results.length > 0) {
+			res.render('partials/category-detail', {category: results});
+		} else {
+			res.redirect('/categories');
+		}
+	});
+});
+app.get('/category/:id/delete', function(req, res, next){
+	var id = req.params.id;
+	if (id!==null && id !== "" && id.length !==12) {
+		db.collection('categories').find({_id: ObjectId(id)}).toArray(function(err, results){
+			if (results.length > 0) {
+				req.session.category_id = id;
+				res.render('partials/category-confirm-delete');
+			} else {
+				res.redirect('/categories');
+			}
+		});
+	} else {
+		res.redirect('/');
+	}
+});
+app.post('/category/:id/delete', function(req, res, next){
+	if (req.session && req.session.category_id && req.session.category_id !== "") {
+		var id = req.session.category_id;
+		db.collection('categories').find({_id: ObjectId(id)}).toArray(function(err, results){
+			if (results.length > 0) {
+				db.collection('categories').remove({_id: ObjectId(id)}, function(err){
+					if(err) throw err;
+					db.collection('articles').remove({category: id}, function(err){
+						if(err) throw err;
+						res.redirect('/categories');
+						delete req.session.category_id;
+					});
+				});
+			} else {
+				res.redirect('/categories');
+			delete req.session.category_id;
+			}
+		});
+	} else {
+		res.redirect('/categories');
+		delete req.session.category_id;
+	}
+});
  /*------------------------------------------------------------
  | SEARCH
  | -----------------------------------------------------------

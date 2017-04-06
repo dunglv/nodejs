@@ -1,0 +1,14 @@
+extends ../index
+block content
+	<div class="col-md-6 col-md-offset-3">
+		<div class="alert alert-danger">
+			<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+			<strong>Warning:</strong> Do you wanr delete this category?
+			<div>
+				<form action="" method="POST" role="form">
+					<button type="submit" class="btn btn-success">Yes</button>
+					<a  href="/categories" class="btn btn-danger">No</a>
+				</form>
+			</div>
+		</div>
+	</div>

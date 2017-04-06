@@ -5,7 +5,7 @@ block content
 			<div class="list-group">
 				-for (var i = 0; i < categories.length; i++) {
 					<div class="list-group-item">
-						<h4 class="list-group-item-heading"><a href="">#{categories[i].title}</a></h4>
+						<h4 class="list-group-item-heading"><a href="/category/#{categories[i]._id}">#{categories[i].title}</a></h4>
 						<p class="list-group-item-text">#{categories[i].description}</p>
 						<div class="opt" style="margin-top: 10px;">
 							<a href="/category/#{categories[i]._id}/delete" class="btn btn-danger"><i class="fa fa-remove"></i></a>
