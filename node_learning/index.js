@@ -261,7 +261,7 @@ app.get('/category/:id', function(req, res){
 		}
 	});
 });
-app.get('/category/:id/delete', function(req, res, next){
+app.get('/category/:id/delete', check_not_login, function(req, res, next){
 	var id = req.params.id;
 	if (id!==null && id !== "" && id.length !==12) {
 		db.collection('categories').find({_id: ObjectId(id)}).toArray(function(err, results){
